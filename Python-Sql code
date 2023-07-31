@@ -1,0 +1,296 @@
+from playsound import playsound
+import mysql.connector
+def datmaker():#database creation
+    data = mysql.connector.connect( host="localhost",user="root",passwd=" ")
+    dat=data.cursor()
+    dat.execute('SHOW DATABASES')
+    if ('arogya',) not in dat:
+        dat.execute('CREATE DATABASE arogya')
+        print('')
+    else:
+        print('')
+def tabmaker():#user input table
+    table = mysql.connector.connect( host="localhost",user="root",passwd=" ",database='arogya')
+    curs = table.cursor()
+    curs.execute('SHOW TABLES')
+    if ('sarthi',) not in curs:
+        curs.execute("CREATE TABLE sarthi(name VARCHAR(255), age INT(4),sex VARCHAR(8),weight INT(3), symptoms VARCHAR(300), AMC VARCHAR(250), zone varchar(2))") 
+        print('')
+    else:
+        print('')        
+def clinmaker():#existing table
+    db = mysql.connector.connect( host="localhost",user="root",passwd=" ",database='arogya')
+    cursor = db.cursor() 
+    cursor.execute('SHOW TABLES')    
+    if ('clinic',) not in cursor:
+        cursor.execute("CREATE TABLE clinic(clinic VARCHAR(70), phoneno INT(11), address VARCHAR(100),zone varchar(2))")#this table could be uploaded on regular basis
+        qu=('INSERT INTO clinic(clinic,phoneno,address,zone) VALUES(%s,%s,%s,%s)')
+        val=('Mohalla clinic',111111111,'hno.20 tyagi mohalla','n')
+        al=('Aam aadmi mohalla clinic',112211111,'gt road alipur,narela','n')
+        lav=('Sri Gangaram hospital',111334111,'karol bagh','c')
+        la=('BL Kapoor hospital',111111553,'patel nagar','c')
+        vla=('Super Speciality',111111323,'saket','e')
+        alv=('Apollo Indraprastha',111130311,'Indraprastha','e')
+        valve=('Janakpuri super speciality hospital',114431111,'Janakpuri','w')
+        evolve=('Deen Dayal Upadhyay',133311111,'Hari Nagar','w')
+        volve=('Aakash Hospital',1111155531,'90/43, Malviya Nagar Rd','s')
+        evl=('South Delhi Hospital',11999339,'A-5,Deol road','s')
+        cursor.execute(qu,val)
+        cursor.execute(qu,al)
+        cursor.execute(qu,lav)
+        cursor.execute(qu,la)
+        cursor.execute(qu,vla)
+        cursor.execute(qu,alv)
+        cursor.execute(qu,valve)
+        cursor.execute(qu,evolve)
+        cursor.execute(qu,volve)
+        cursor.execute(qu,evl)
+        db.commit()
+        print('')
+    else :
+        print('')    
+def vartalap():
+    mydb = mysql.connector.connect( host="localhost",user="root",passwd=" ",database='arogya')
+    mycursor = mydb.cursor()#covid testing symptoms
+    covid=['fever','dry cough','cough','cold','drycough','wet cough','wetcough','tiredness','head ache',
+           'headache','body pain','bodypain','body pain','bodypain','sore throat','soarthroat','diarrhoea'
+           ,'vommiting','conjuctivities','tasteloss','loss of taste','smelllost','lost of smell','rashes','rashes on skin','skin rashes','discolouration of fingers',
+           'finger discolouration',
+           'toe discolouration','discolouration of toe','difficulty in breathing','difficult breathing','breathing difficulty','pain in chest', 'chest pain','pressure in chest',
+           'increase chest pressure','jukam','jukaam','zukam','zukaam','balgam','thakan','thakaan','sir dard','badan dard','gale main kharash','gale main kharrash','dast','dast lagna',
+           'gala dard', 'gale main dard','atisaar','ulti ana','ulti','ultiyan','ankhe ana','aankhe ana','aankhe anaa','netrashleshmakalashodh','svad ki haani','gandh ki hani',
+           'chakatte','didore','laal chakatte','lal chakatte','chakatta','ungli ka rang udna','ungliyo ka rang udna','pairo ka rang udna', 'pair ka rang udna','saans lene main pareshani',
+           'saans main dikkat','shwas rog','chhati main dard','chhati dard', 'chhati main dabaav','chhati main dabav','sirdard','khasi','seene main dard','seene main dabav']
+    playsound('akshar.mp3')#request to answer in lower case
+    print(' Kripya kar sare uttar lower case artharth chhote aksharo main hi de\n please write all answers in lower case only')
+    playsound('swagat.mp3')#greeting
+    print('Namastey  S.A.R.T.H.I app par apka swagat hai\nhello welcome to S.A.R.T.H.I app') 
+    x=int(input('Hindi ke liye 1 dabaye, press 2 for english:'))#language choice
+    if x==1:#for Hindi
+        playsound('hindresidence.mp3')#residential area for hospital recommendation
+        sthan=input(' yadi aap uttar dilli ke niwasi hai to n dabaye\n yadi aap dakshin dilli ke niwasi hai to s dabaye\n yadi aap purab dilli ke niwasi hai to e dabaye\n yadi aap pashchim dilli ke niwasi hai to w dabaye\n yadi aap central dilli ke niwasi hai to c dabaye:')
+        playsound('naam.mp3')
+        Naam=input('Naam type kare:')
+        playsound('umra.mp3')
+        Umra=int(input('umra type kare:'))
+        playsound('ling.mp3')
+        Ling=input('ling type kare:')
+        playsound('vajan.mp3')
+        Vajan=int(input('vajan type kare:'))
+        playsound('lakshan.mp3')
+        Lakshan=input('Lakshan type kare:')
+        playsound('dava.mp3')
+        Dava=input('Kya aap kisi anya dava ka sewan karte hai yadi haan to type kare:')#other medicine consumption asked to prevent drug reaction
+        sql = "INSERT INTO sarthi (name,age,sex,weight,symptoms,AMC,zone) VALUES (%s, %s,%s,%s,%s,%s,%s)"
+        val = (Naam,Umra,Ling,Vajan,Lakshan,Dava,sthan)
+        mycursor.execute(sql, val)
+        mydb.commit()
+        print('data added')
+        mycursor.execute('SELECT * FROM sarthi')
+        myresult=mycursor.fetchall()
+        lst=[]
+        for x in myresult:
+           lst.append(x)
+        print(lst[-1])
+        for i in Lakshan.split(','):
+            if i in covid:#covid symptoms
+                print('Hame ye batate hue khed ho raha hai ki aapke kuch lakshan Covid-19 ke lakshano \nse milte hai kripya kar swayam ko quarantine karli jiye aur neeche bataye gaye\nchikitsalayo ki suchi main se kisi ek main jakar jaanch karaye.\nJaate samay mask avashya pehne aaur samajic doori banakar rahe')
+                playsound('covidhindi.mp3')  
+                if sthan=='n':#hospital zone recommendation
+                        ql = "SELECT * FROM clinic WHERE zone = 'n' "
+                        mycursor.execute(ql)
+                        an = mycursor.fetchall()
+                        for co in an:
+                          print(co)
+                elif sthan=='s':
+                        ql = "SELECT * FROM clinic WHERE zone = 's' "
+                        mycursor.execute(ql)
+                        an = mycursor.fetchall()
+                        for co in an:
+                          print(co)
+                elif sthan=='e':
+                        ql = "SELECT * FROM clinic WHERE zone = 'e' "
+                        mycursor.execute(ql)
+                        an = mycursor.fetchall()
+                        for co in an:
+                          print(co)
+                elif sthan=='w':
+                       ql = "SELECT * FROM clinic WHERE zone = 'w' "
+                       mycursor.execute(ql)
+                       an = mycursor.fetchall()
+                       for co in an:
+                          print(co)
+                elif sthan=='c':
+                        ql = "SELECT * FROM clinic WHERE zone = 'c' "
+                        mycursor.execute(ql)
+                        an = mycursor.fetchall()
+                        for co in an:
+                          print(co)
+                break         
+            else :
+              playsound('hindclinic.mp3')
+              print('Aapke shatra ke kuch chikitsalyo ki suchi ye rahi')
+              if sthan=='n':#non covid symptoms
+                        ql = "SELECT * FROM clinic WHERE zone = 'n' "
+                        mycursor.execute(ql)
+                        an = mycursor.fetchall()
+                        for co in an:
+                          print(co)
+              elif sthan=='s':
+                        ql = "SELECT * FROM clinic WHERE zone = 's' "
+                        mycursor.execute(ql)
+                        an = mycursor.fetchall()
+                        for co in an:
+                          print(co)
+              elif sthan=='e':
+                        ql = "SELECT * FROM clinic WHERE zone = 'e' "
+                        mycursor.execute(ql)
+                        an = mycursor.fetchall()
+                        for co in an:
+                          print(co)
+              elif sthan=='w':
+                        playsound('hindclinic.mp3')
+                        ql = "SELECT * FROM clinic WHERE zone = 'w' "
+                        mycursor.execute(ql)
+                        an = mycursor.fetchall()
+                        for co in an:
+                          print(co)
+              elif sthan=='c':
+                        ql = "SELECT * FROM clinic WHERE zone = 'c' "
+                        mycursor.execute(ql)
+                        an = mycursor.fetchall()
+                        for co in an:
+                          print(co)         
+    elif x==2:#english input
+        playsound('engresidence.mp3')   
+        Sthan=input(' if you are a resident of north Delhi then press n\n if you are a resident of east Delhi then press e\n if you are resident of west Delhi then press w\n if you are a resident of south Delhi then press s\n if you are a resident of central Delhi then press c.:')
+        playsound('name.mp3')
+        Name=input('Please type your name:')
+        playsound('age.mp3')
+        Age=int(input('Please enter your age:'))
+        playsound('sex.mp3')
+        Sex=input('please type your sex:')
+        playsound('weight.mp3')
+        Weight=int(input('please type your weight:'))
+        playsound('symptoms.mp3')
+        Symptoms=input('please type your symptoms:')
+        playsound('amc.mp3')
+        Amc=input('Do you consume some other medicine if yes then please enter:')
+        sql = "INSERT INTO sarthi (name,age,sex,weight,symptoms,AMC,zone) VALUES (%s, %s,%s,%s,%s,%s,%s)"
+        val = (Name,Age,Sex,Weight,Symptoms,Amc,Sthan)
+        mycursor.execute(sql, val)
+        mydb.commit()
+        print('data added')
+        mycursor.execute('SELECT * FROM sarthi')
+        myresult=mycursor.fetchall()
+        lst=[]
+        for x in myresult:
+               lst.append(x)
+        print(lst[-1])
+        for i in Symptoms.split(','):
+            if i in covid:
+                playsound('covideng.mp3')
+                print('we are sorry to inform you that some of your symptoms match with Covid-19,\nplease quarantine yourselef and visit one of the clinic listed below.\n Please wear a mask while your visit and maintain social distancing') 
+                if Sthan=='n':
+                        ql = "SELECT * FROM clinic WHERE zone = 'n' "
+                        mycursor.execute(ql)
+                        an = mycursor.fetchall()
+                        for co in an:
+                          print(co)
+                elif Sthan=='s':
+                        ql = "SELECT * FROM clinic WHERE zone = 's' "
+                        mycursor.execute(ql)
+                        an = mycursor.fetchall()
+                        for co in an:
+                          print(co)
+                elif Sthan=='e':
+                        ql = "SELECT * FROM clinic WHERE zone = 'e' "
+                        mycursor.execute(ql)
+                        an = mycursor.fetchall()
+                        for co in an:
+                          print(co)
+                elif Sthan=='w':
+                        ql = "SELECT * FROM clinic WHERE zone = 'w' "
+                        mycursor.execute(ql)
+                        an = mycursor.fetchall()
+                        for co in an:
+                          print(co)
+                elif Sthan=='c':
+                        ql = "SELECT * FROM clinic WHERE zone = 'c' "
+                        mycursor.execute(ql)
+                        an = mycursor.fetchall()
+                        for co in an:
+                          print(co)
+                break         
+                          
+            else:
+                  playsound('clinic.mp3')
+                  print('This is the list of some clinics in your are')
+                  if Sthan=='n':
+                        ql = "SELECT * FROM clinic WHERE zone = 'n' "
+                        mycursor.execute(ql)
+                        an = mycursor.fetchall()
+                        for co in an:
+                          print(co)
+                  elif Sthan=='s':
+                        ql = "SELECT * FROM clinic WHERE zone = 's' "
+                        mycursor.execute(ql)
+                        an = mycursor.fetchall()
+                        for co in an:
+                          print(co)
+                  elif Sthan=='e':
+                        ql = "SELECT * FROM clinic WHERE zone = 'e' "
+                        mycursor.execute(ql)
+                        an = mycursor.fetchall()
+                        for co in an:
+                          print(co)
+                  elif Sthan=='w':
+                        playsound('clinic.mp3')
+                        ql = "SELECT * FROM clinic WHERE zone = 'w' "
+                        mycursor.execute(ql)
+                        an = mycursor.fetchall()
+                        for co in an:
+                          print(co)
+                  elif Sthan=='c':
+                        ql = "SELECT * FROM clinic WHERE zone = 'c' "
+                        mycursor.execute(ql)
+                        an = mycursor.fetchall()
+                        for co in an:
+                          print(co)         
+    else:
+        playsound('error.mp3') and print('ERROR !!incorrect choice entered \n ',25*('* '))
+def pattern_e(n=4):#Graphic display
+      for i in range(1,n+1):
+            print()
+            for j in range(1,n+1-i):
+                  print(" ",end="\t")
+            for k in range(1,i+1):
+                  print("*",end="\t")
+            for l in range (1,i):
+                  print("*",end="\t")
+
+    
+        
+def start():#code initaion
+    pattern_e()
+    print(‘\nS.A.R.T.H.I(Systematic Application Regulating Total Health Information)’)
+    vartalap()
+    print(' Thank you \n Aapka dhanyavaad \n',25*('* '))
+    playsound('oneonly.mp3')
+    playsound('anya.mp3')
+    ch=input('Any more patient(y/n)\nkya koi anya patient hai=')
+    while ch=='y':
+        pattern_e()
+        print('\nS.A.R.T.H.I(Systematic Application Regulating Total Health Information)’)
+        vartalap()
+        print(' Thank you \n Aapka dhanyavaad \n',25*('* '))
+        playsound('oneonly.mp3')
+        playsound('anya.mp3')
+        ch=input('Any more patient(y/n)\nkya koi anya patient hai=')
+    if ch=='n':
+        print(' Thank you \n Aapka dhanyavaad \n' ,25*('* '))
+        playsound('oneonly.mp3')
+datmaker()
+tabmaker()
+clinmaker()
+start()
